@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "binslot",
+	"version": "${version}",
+	"name": "Bin Slot",
+	"description": "Adds a creative-style button to survival and container inventories, similar to the creative tab.",
+	"authors": [
+		"5antos"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/binslot/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.example.binslot.BinSlot"
+		],
+		"client": [
+			"com.example.binslot.BinSlotClient"
+		]
+	},
+	"mixins": [
+		"binslot.mixins.json",
+		{
+			"config": "binslot.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.7",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

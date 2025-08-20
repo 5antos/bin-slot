@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.example.binslot.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "GenericContainerScreenMixin",
+    "HandledScreenMixin",
+    "accessor.HandledScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "accessor.ScreenAccessor",
+    "accessor.SlotAccessor"
+  ]
+}
