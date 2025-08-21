@@ -1,6 +1,6 @@
 package com.example.binslot.network.payload;
 
-import com.example.binslot.BinSlot;
+import com.example.binslot.BinSlotModInitializer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -9,7 +9,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public record MouseClickC2SPayload(ItemStack itemStack, boolean isRightClick, boolean isShiftClick) implements CustomPayload {
-    public static final Identifier TRASH_ITEM_PAYLOAD_ID = BinSlot.id("mouse_click");
+    public static final Identifier TRASH_ITEM_PAYLOAD_ID = BinSlotModInitializer.id("mouse_click");
     public static final CustomPayload.Id<MouseClickC2SPayload> ID = new CustomPayload.Id<>(TRASH_ITEM_PAYLOAD_ID);
     public static final PacketCodec<RegistryByteBuf, MouseClickC2SPayload> CODEC = PacketCodec.tuple(
         ItemStack.OPTIONAL_PACKET_CODEC,

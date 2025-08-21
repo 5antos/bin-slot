@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 
-public class BinSlot implements ModInitializer {
+public class BinSlotModInitializer implements ModInitializer {
 	public static final String MOD_ID = "binslot";
 	public static final Version VERSION;
 

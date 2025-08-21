@@ -1,8 +1,8 @@
 package com.example.binslot.event;
 
-import com.example.binslot.TrashSlot;
+import com.example.binslot.BinSlot;
 import com.example.binslot.event.callback.HandledScreenMouseClickCallback;
-import com.example.binslot.event.callback.TrashSlotHoverCallback;
+import com.example.binslot.event.callback.BinSlotHoverCallback;
 import com.example.binslot.mixin.client.accessor.SlotAccessor;
 import com.example.binslot.network.payload.MouseClickC2SPayload;
 import com.example.binslot.util.ScreenUtil;
@@ -28,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientEventHandler {
-    private static final TrashSlot trashSlot = new TrashSlot();
+    private static final BinSlot binSlot = new BinSlot();
 
     public static void init() {
         HandledScreenMouseClickCallback.EVENT.register(ClientEventHandler::onMouseClick);
-        TrashSlotHoverCallback.EVENT.register(ClientEventHandler::onTrashSlotHover);
+        BinSlotHoverCallback.EVENT.register(ClientEventHandler::onBinSlotHover);
     }
 
     public static void onMouseClick(boolean isRightClick, double mouseX, double mouseY, ItemStack itemStack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
@@ -41,7 +41,7 @@ public class ClientEventHandler {
 
         boolean isHovering = ScreenUtil.isMouseOverArea(
             (int)mouseX, (int)mouseY,
-            trashSlot.x, trashSlot.y,
+            binSlot.x, binSlot.y,
             Constants.CLICKABLE_WIDTH, Constants.CLICKABLE_HEIGHT
         );
 
@@ -52,8 +52,8 @@ public class ClientEventHandler {
         }
     }
 
-    public static void onTrashSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, CallbackInfo callbackInfo) {
-        SlotAccessor slotAccessor = (SlotAccessor) trashSlot;
+    public static void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, CallbackInfo callbackInfo) {
+        SlotAccessor slotAccessor = (SlotAccessor) binSlot;
 
         // Calculate the clickable area position (the actual slot area within the texture)
         int clickableX = slotX + Constants.CLICKABLE_OFFSET_X;
@@ -62,31 +62,31 @@ public class ClientEventHandler {
         slotAccessor.setX(clickableX);
         slotAccessor.setY(clickableY);
 
-        Identifier TRASH_SLOT_HIGHLIGHT_BACK_SPRITE = Identifier.ofVanilla("container/slot_highlight_back");
-        Identifier TRASH_SLOT_HIGHLIGHT_FRONT_SPRITE = Identifier.ofVanilla("container/slot_highlight_front");
+        Identifier BIN_SLOT_HIGHLIGHT_BACK_SPRITE = Identifier.ofVanilla("container/slot_highlight_back");
+        Identifier BIN_SLOT_HIGHLIGHT_FRONT_SPRITE = Identifier.ofVanilla("container/slot_highlight_front");
         
-        int highlightX = clickableX - Constants.HIGHLIGHT_OFFSET;
-        int highlightY = clickableY - Constants.HIGHLIGHT_OFFSET;
+        int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_OFFSET;
+        int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_OFFSET;
 
         // Position the highlight sprites relative to the clickable area
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
-            TRASH_SLOT_HIGHLIGHT_BACK_SPRITE,
-            Constants.HIGHLIGHT_SIZE, Constants.HIGHLIGHT_SIZE,
+            BIN_SLOT_HIGHLIGHT_BACK_SPRITE,
+            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE,
             0, 0,
             highlightX,
             highlightY,
-            Constants.HIGHLIGHT_SIZE, Constants.HIGHLIGHT_SIZE
+            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE
         );
 
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
-            TRASH_SLOT_HIGHLIGHT_FRONT_SPRITE,
-            Constants.HIGHLIGHT_SIZE, Constants.HIGHLIGHT_SIZE,
+            BIN_SLOT_HIGHLIGHT_FRONT_SPRITE,
+            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE,
             0, 0,
             highlightX,
             highlightY,
-            Constants.HIGHLIGHT_SIZE, Constants.HIGHLIGHT_SIZE
+            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE
         );
 
         if (isShiftDown)

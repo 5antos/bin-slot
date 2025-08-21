@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.binslot.BinSlot"
+			"com.example.binslot.BinSlotModInitializer"
 		],
 		"client": [
-			"com.example.binslot.BinSlotClient"
+			"com.example.binslot.BinSlotClientModInitializer"
 		]
 	},
 	"mixins": [

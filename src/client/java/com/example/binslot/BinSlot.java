@@ -5,12 +5,12 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-public class TrashSlot extends Slot {
-    public TrashSlot() {
-        super(new TrashInventory(), 0, 0, 0);
+public class BinSlot extends Slot {
+    public BinSlot() {
+        super(new BinInventory(), 0, 0, 0);
     }
 
-    public static class TrashInventory implements Inventory {
+    public static class BinInventory implements Inventory {
         private ItemStack currentStack = ItemStack.EMPTY;
 
         @Override
