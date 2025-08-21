@@ -44,11 +44,11 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
                 .findFirst();
 
             if (hotBarSlot.isPresent()) {
-                int topLeftCornerX = accessor.getX() + accessor.getBackgroundWidth() - Constants.BIN_SLOT_X_OFFSET;
+                int topLeftCornerX = accessor.getX() + accessor.getBackgroundWidth() - Constants.SLOT_X_OFFSET;
 
                 Slot hotBarSlotInstance = hotBarSlot.get();
 
-                int topLeftCornerY = accessor.getY() + hotBarSlotInstance.y - Constants.BIN_SLOT_Y_OFFSET;
+                int topLeftCornerY = accessor.getY() + hotBarSlotInstance.y - Constants.SLOT_Y_OFFSET;
 
                 boolean isWithinTextureBounds = ScreenUtil.isMouseOverTextureBounds(
                     (int)mouseX, (int)mouseY,

@@ -1,6 +1,6 @@
 package com.example.binslot.event;
 
-import com.example.binslot.BinSlot;
+import com.example.binslot.extension.BinSlot;
 import com.example.binslot.event.callback.HandledScreenMouseClickCallback;
 import com.example.binslot.event.callback.BinSlotHoverCallback;
 import com.example.binslot.mixin.client.accessor.SlotAccessor;
@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
@@ -61,32 +60,29 @@ public class ClientEventHandler {
         
         slotAccessor.setX(clickableX);
         slotAccessor.setY(clickableY);
-
-        Identifier BIN_SLOT_HIGHLIGHT_BACK_SPRITE = Identifier.ofVanilla("container/slot_highlight_back");
-        Identifier BIN_SLOT_HIGHLIGHT_FRONT_SPRITE = Identifier.ofVanilla("container/slot_highlight_front");
         
-        int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_OFFSET;
-        int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_OFFSET;
+        int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
+        int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
 
         // Position the highlight sprites relative to the clickable area
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
-            BIN_SLOT_HIGHLIGHT_BACK_SPRITE,
-            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE,
+            Constants.BIN_SLOT_HIGHLIGHT_BACK_TEXTURE,
+            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
             0, 0,
             highlightX,
             highlightY,
-            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE
+            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
         );
 
         context.drawGuiTexture(
             RenderPipelines.GUI_TEXTURED,
-            BIN_SLOT_HIGHLIGHT_FRONT_SPRITE,
-            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE,
+            Constants.BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE,
+            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
             0, 0,
             highlightX,
             highlightY,
-            Constants.SLOT_HIGHLIGHT_SIZE, Constants.SLOT_HIGHLIGHT_SIZE
+            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
         );
 
         if (isShiftDown)
@@ -136,9 +132,9 @@ public class ClientEventHandler {
                 
                 context.fill(
                     slotXPos, slotYPos, 
-                    slotXPos + Constants.SLOT_SIZE - 2*Constants.SLOT_OUTLINE_WIDTH, 
-                    slotYPos + Constants.SLOT_SIZE - 2*Constants.SLOT_OUTLINE_WIDTH, 
-                    (Constants.RED_OVERLAY_OPACITY << 24) | Constants.RED_OVERLAY_COLOR
+                    slotXPos + Constants.VANILLA_SLOT_WIDTH - 2*Constants.SLOT_ICON_TEXTURE_OUTLINE_WIDTH,
+                    slotYPos + Constants.VANILLA_SLOT_HEIGHT - 2*Constants.SLOT_ICON_TEXTURE_OUTLINE_WIDTH,
+                    (Constants.MATCHING_SLOTS_OVERLAY_OPACITY << 24) | Constants.MATCHING_SLOTS_OVERLAY_COLOR
                 );
             }
         }

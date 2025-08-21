@@ -1,4 +1,4 @@
-package com.example.binslot;
+package com.example.binslot.extension;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;

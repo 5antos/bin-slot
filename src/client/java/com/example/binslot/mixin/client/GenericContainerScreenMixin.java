@@ -1,7 +1,6 @@
 package com.example.binslot.mixin.client;
 
-import com.example.binslot.BinSlot;
-import com.example.binslot.event.callback.TrashSlotHoverCallback;
+import com.example.binslot.event.callback.BinSlotHoverCallback;
 import com.example.binslot.mixin.client.accessor.HandledScreenAccessor;
 import com.example.binslot.mixin.client.accessor.ScreenAccessor;
 import com.example.binslot.extension.HotBarSlot;
@@ -30,9 +29,7 @@ import net.minecraft.client.gui.screen.ingame.BrewingStandScreen;
 import net.minecraft.client.gui.screen.ingame.HorseScreen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -60,9 +57,6 @@ import java.util.Optional;
     MerchantScreen.class
 })
 public class GenericContainerScreenMixin {
-    @Unique
-    private static final Identifier TRASH_SLOT_TEXTURE = BinSlot.id("textures/gui/sprites/container/bin_slot.png");
-
     @Inject(method = "drawBackground", at = @At("TAIL"))
     private void onDrawBackground(DrawContext context, float deltaTicks, int mouseX, int mouseY, CallbackInfo callbackInfo) {
         var screenHandler = ((HandledScreen<?>) (Object) this);
@@ -76,21 +70,66 @@ public class GenericContainerScreenMixin {
                 .filter(slot -> slot instanceof HotBarSlot)
                 .findFirst();
 
-            int topLeftCornerX = accessor.getX() + accessor.getBackgroundWidth() - Constants.TRASH_SLOT_X_OFFSET;
+            int topLeftCornerX = accessor.getX() + accessor.getBackgroundWidth() - Constants.SLOT_X_OFFSET;
 
             if (hotBarSlot.isPresent()) {
                 Slot slot = hotBarSlot.get();
 
-                int topLeftCornerY = accessor.getY() + slot.y - Constants.TRASH_SLOT_Y_OFFSET;
+                int topLeftCornerY = accessor.getY() + slot.y - Constants.SLOT_Y_OFFSET;
 
+                // Top
                 context.drawTexture(
                     RenderPipelines.GUI_TEXTURED,
-                    TRASH_SLOT_TEXTURE,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE,
+                    topLeftCornerX + Constants.TOP_TEXTURE_OFFSET_X,
+                    topLeftCornerY,
+                    Constants.TOP_TEXTURE_X, Constants.TOP_TEXTURE_Y,
+                    Constants.TOP_TEXTURE_WIDTH, Constants.TOP_TEXTURE_HEIGHT,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                );
+
+                // Inner corner
+                context.drawTexture(
+                    RenderPipelines.GUI_TEXTURED,
+                    Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE,
                     topLeftCornerX,
                     topLeftCornerY,
-                    0.0f, 0.0f,
-                    Constants.TEXTURE_WIDTH, Constants.TEXTURE_HEIGHT,
-                    Constants.TEXTURE_WIDTH, Constants.TEXTURE_HEIGHT
+                    Constants.INNER_CORNER_TEXTURE_X, Constants.INNER_CORNER_TEXTURE_Y,
+                    Constants.INNER_CORNER_TEXTURE_WIDTH, Constants.INNER_CORNER_TEXTURE_HEIGHT,
+                    Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_HEIGHT
+                );
+
+                // Slot frame left padding
+                context.drawTexture(
+                    RenderPipelines.GUI_TEXTURED,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE,
+                    topLeftCornerX,
+                    topLeftCornerY + Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_OFFSET_Y,
+                    Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_X, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_Y,
+                    Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_WIDTH, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_HEIGHT,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                );
+
+                // Slot frame
+                context.drawTexture(
+                    RenderPipelines.GUI_TEXTURED,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE,
+                    topLeftCornerX + Constants.SLOT_FRAME_TEXTURE_OFFSET_X,
+                    topLeftCornerY + Constants.SLOT_FRAME_TEXTURE_OFFSET_Y,
+                    Constants.SLOT_FRAME_TEXTURE_X, Constants.SLOT_FRAME_TEXTURE_Y,
+                    Constants.SLOT_FRAME_TEXTURE_WIDTH, Constants.SLOT_FRAME_TEXTURE_HEIGHT,
+                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                );
+
+                // Slot icon
+                context.drawTexture(
+                    RenderPipelines.GUI_TEXTURED,
+                    Constants.CREATIVE_INVENTORY_TEXTURE,
+                    topLeftCornerX + Constants.SLOT_ICON_TEXTURE_OFFSET_X,
+                    topLeftCornerY + Constants.SLOT_ICON_TEXTURE_OFFSET_Y,
+                    Constants.SLOT_ICON_TEXTURE_X, Constants.SLOT_ICON_TEXTURE_Y,
+                    Constants.SLOT_ICON_TEXTURE_WIDTH, Constants.SLOT_ICON_TEXTURE_HEIGHT,
+                    Constants.CREATIVE_INVENTORY_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TEXTURE_HEIGHT
                 );
 
                 int clickableX = topLeftCornerX + Constants.CLICKABLE_OFFSET_X;
@@ -105,7 +144,7 @@ public class GenericContainerScreenMixin {
                 ScreenAccessor screenAccessor = (ScreenAccessor) accessor;
 
                 if (isHovering) {
-                    TrashSlotHoverCallback.EVENT.invoker().onTrashSlotHover(
+                    BinSlotHoverCallback.EVENT.invoker().onBinSlotHover(
                         screenAccessor.getTextRenderer(),
                         context,
                         topLeftCornerX, topLeftCornerY,
