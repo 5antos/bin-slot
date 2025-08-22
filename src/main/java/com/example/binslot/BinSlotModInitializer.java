@@ -9,7 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 
 public class BinSlotModInitializer implements ModInitializer {
-	public static final String MOD_ID = "binslot";
+	public static final String MOD_ID = "bin-slot";
 	public static final Version VERSION;
 
 	// This logger is used to write text to the console and the log file.

@@ -1,17 +1,17 @@
 {
 	"schemaVersion": 1,
-	"id": "binslot",
+	"id": "bin-slot",
 	"version": "${version}",
 	"name": "Bin Slot",
-	"description": "Adds a creative-style button to survival and container inventories, similar to the creative tab.",
+	"description": "Delete items directly from your inventory",
 	"authors": [
 		"5antos"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/5antos/bin-slot/issues",
+		"sources": "https://github.com/5antos/bin-slot"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/binslot/icon.png",
 	"environment": "*",
 	"entrypoints": {
