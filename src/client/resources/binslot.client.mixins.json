@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.example.binslot.mixin.client",
+  "package": "me.p5antos.binslot.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "GenericContainerScreenMixin",
