@@ -7,6 +7,8 @@ public final class Constants {
     // Identifiers
     public static final Identifier
         // Textures
+        BIN_SLOT_TEXTURE = BinSlotModInitializer.id("textures/gui/slot.png"),
+
         CREATIVE_INVENTORY_TEXTURE = Identifier.ofVanilla("textures/gui/container/creative_inventory/tab_inventory.png"),
         CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE = Identifier.ofVanilla("textures/gui/sprites/container/creative_inventory/tab_top_selected_1.png"),
         SURVIVAL_INVENTORY_TEXTURE = Identifier.ofVanilla("textures/gui/container/inventory.png"),

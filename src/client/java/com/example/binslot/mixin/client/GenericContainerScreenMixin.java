@@ -4,8 +4,10 @@ import com.example.binslot.event.callback.BinSlotHoverCallback;
 import com.example.binslot.mixin.client.accessor.HandledScreenAccessor;
 import com.example.binslot.mixin.client.accessor.ScreenAccessor;
 import com.example.binslot.extension.HotBarSlot;
+import com.example.binslot.util.ResourceUtil;
 import com.example.binslot.util.ScreenUtil;
 import com.example.binslot.util.Constants;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -77,60 +79,81 @@ public class GenericContainerScreenMixin {
 
                 int topLeftCornerY = accessor.getY() + slot.y - Constants.SLOT_Y_OFFSET;
 
-                // Top
-                context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE,
-                    topLeftCornerX + Constants.TOP_TEXTURE_OFFSET_X,
-                    topLeftCornerY,
-                    Constants.TOP_TEXTURE_X, Constants.TOP_TEXTURE_Y,
-                    Constants.TOP_TEXTURE_WIDTH, Constants.TOP_TEXTURE_HEIGHT,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                boolean isSlotTextureBeingOverwritten = ResourceUtil.isTextureBeingOverwritten(
+                    MinecraftClient.getInstance().getResourceManager(),
+                    Constants.BIN_SLOT_TEXTURE
                 );
 
-                // Inner corner
-                context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE,
-                    topLeftCornerX,
-                    topLeftCornerY,
-                    Constants.INNER_CORNER_TEXTURE_X, Constants.INNER_CORNER_TEXTURE_Y,
-                    Constants.INNER_CORNER_TEXTURE_WIDTH, Constants.INNER_CORNER_TEXTURE_HEIGHT,
-                    Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_HEIGHT
-                );
+                if (isSlotTextureBeingOverwritten) {
+                    // Draw the slot from the resource pack texture
 
-                // Slot frame left padding
-                context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE,
-                    topLeftCornerX,
-                    topLeftCornerY + Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_OFFSET_Y,
-                    Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_X, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_Y,
-                    Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_WIDTH, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_HEIGHT,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
-                );
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.BIN_SLOT_TEXTURE,
+                        topLeftCornerX,
+                        topLeftCornerY,
+                        0, 0,
+                        27, 32,
+                        27, 32
+                    );
+                } else {
+                    // Draw the slot using built-in inventory textures (even if overridden by resource packs) to match the inventory style
 
-                // Slot frame
-                context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE,
-                    topLeftCornerX + Constants.SLOT_FRAME_TEXTURE_OFFSET_X,
-                    topLeftCornerY + Constants.SLOT_FRAME_TEXTURE_OFFSET_Y,
-                    Constants.SLOT_FRAME_TEXTURE_X, Constants.SLOT_FRAME_TEXTURE_Y,
-                    Constants.SLOT_FRAME_TEXTURE_WIDTH, Constants.SLOT_FRAME_TEXTURE_HEIGHT,
-                    Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
-                );
+                    // Top
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE,
+                        topLeftCornerX + Constants.TOP_TEXTURE_OFFSET_X,
+                        topLeftCornerY,
+                        Constants.TOP_TEXTURE_X, Constants.TOP_TEXTURE_Y,
+                        Constants.TOP_TEXTURE_WIDTH, Constants.TOP_TEXTURE_HEIGHT,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                    );
 
-                // Slot icon
-                context.drawTexture(
-                    RenderPipelines.GUI_TEXTURED,
-                    Constants.CREATIVE_INVENTORY_TEXTURE,
-                    topLeftCornerX + Constants.SLOT_ICON_TEXTURE_OFFSET_X,
-                    topLeftCornerY + Constants.SLOT_ICON_TEXTURE_OFFSET_Y,
-                    Constants.SLOT_ICON_TEXTURE_X, Constants.SLOT_ICON_TEXTURE_Y,
-                    Constants.SLOT_ICON_TEXTURE_WIDTH, Constants.SLOT_ICON_TEXTURE_HEIGHT,
-                    Constants.CREATIVE_INVENTORY_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TEXTURE_HEIGHT
-                );
+                    // Inner corner
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE,
+                        topLeftCornerX,
+                        topLeftCornerY,
+                        Constants.INNER_CORNER_TEXTURE_X, Constants.INNER_CORNER_TEXTURE_Y,
+                        Constants.INNER_CORNER_TEXTURE_WIDTH, Constants.INNER_CORNER_TEXTURE_HEIGHT,
+                        Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE_HEIGHT
+                    );
+
+                    // Slot frame left padding
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE,
+                        topLeftCornerX,
+                        topLeftCornerY + Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_OFFSET_Y,
+                        Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_X, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_Y,
+                        Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_WIDTH, Constants.SLOT_FRAME_LEFT_PADDING_TEXTURE_HEIGHT,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                    );
+
+                    // Slot frame
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE,
+                        topLeftCornerX + Constants.SLOT_FRAME_TEXTURE_OFFSET_X,
+                        topLeftCornerY + Constants.SLOT_FRAME_TEXTURE_OFFSET_Y,
+                        Constants.SLOT_FRAME_TEXTURE_X, Constants.SLOT_FRAME_TEXTURE_Y,
+                        Constants.SLOT_FRAME_TEXTURE_WIDTH, Constants.SLOT_FRAME_TEXTURE_HEIGHT,
+                        Constants.SURVIVAL_INVENTORY_TEXTURE_WIDTH, Constants.SURVIVAL_INVENTORY_TEXTURE_HEIGHT
+                    );
+
+                    // Slot icon
+                    context.drawTexture(
+                        RenderPipelines.GUI_TEXTURED,
+                        Constants.CREATIVE_INVENTORY_TEXTURE,
+                        topLeftCornerX + Constants.SLOT_ICON_TEXTURE_OFFSET_X,
+                        topLeftCornerY + Constants.SLOT_ICON_TEXTURE_OFFSET_Y,
+                        Constants.SLOT_ICON_TEXTURE_X, Constants.SLOT_ICON_TEXTURE_Y,
+                        Constants.SLOT_ICON_TEXTURE_WIDTH, Constants.SLOT_ICON_TEXTURE_HEIGHT,
+                        Constants.CREATIVE_INVENTORY_TEXTURE_WIDTH, Constants.CREATIVE_INVENTORY_TEXTURE_HEIGHT
+                    );
+                }
 
                 int clickableX = topLeftCornerX + Constants.CLICKABLE_OFFSET_X;
                 int clickableY = topLeftCornerY + Constants.CLICKABLE_OFFSET_Y;
