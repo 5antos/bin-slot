@@ -1,5 +1,7 @@
 This mod adds a convenient trash bin slot to your inventory for easy item disposal.
 
+It is **required** on the server, but **optional** on the client, meaning only the players that want to use it should install it.
+
 ## Features
 
 ### 🗑️ Trash Bin Slot
