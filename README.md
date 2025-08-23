@@ -24,7 +24,7 @@ This mod adds a convenient trash bin slot to your inventory for easy item dispos
 
 ### 🖼️ **Slot Appearance**
 - The trash bin slot texture is automatically generated using built-in game textures and adapts to match your active resource pack's inventory GUI style
-- You can customize the appearance by using a resource pack that supports this mod (specifically one that has a texture for the [slot.png](https://github.com/5antos/bin-slot/blob/main/src/main/resources/assets/binslot/textures/gui/slot.png) file
+- You can customize the appearance by using a resource pack that supports this mod (specifically one that has a texture for the custom [slot.png](https://github.com/5antos/bin-slot/blob/main/src/main/resources/assets/binslot/textures/gui/slot.png) file)
 
 
 ---
