@@ -3,9 +3,9 @@ package me.p5antos.binslot.network;
 import me.p5antos.binslot.network.payload.MouseClickC2SPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -54,17 +54,17 @@ public class NetworkManager {
         if (targetStack.isEmpty())
             return;
 
-        // Get the item ID for comparison
         Identifier targetItemId = Registries.ITEM.getId(targetStack.getItem());
 
-        PlayerInventory playerInventory = player.getInventory();
-        
-        // Check all inventory slots (main inventory, hotbar, and offhand) in one loop
-        for (int i = 0; i < playerInventory.size(); i++) {
-            ItemStack stack = playerInventory.getStack(i);
+        ScreenHandler screenHandler = player.currentScreenHandler;
+
+        for (int i = 0; i < screenHandler.slots.size(); i++) {
+            Slot slot = screenHandler.slots.get(i);
+
+            ItemStack stack = slot.getStack();
 
             if (!stack.isEmpty() && Registries.ITEM.getId(stack.getItem()).equals(targetItemId))
-                playerInventory.setStack(i, ItemStack.EMPTY);
+                slot.setStack(ItemStack.EMPTY);
         }
     }
 }

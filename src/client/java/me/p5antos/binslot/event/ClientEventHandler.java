@@ -12,7 +12,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -108,8 +107,6 @@ public class ClientEventHandler {
         if (cursorStack.isEmpty())
             return;
         
-        PlayerInventory playerInventory = client.player.getInventory();
-        
         if (!(client.currentScreen instanceof HandledScreen<?> handledScreen))
             return;
 
@@ -117,12 +114,9 @@ public class ClientEventHandler {
         
         int containerX = accessor.getX();
         int containerY = accessor.getY();
-        
+
         for (int i = 0; i < screenHandler.slots.size(); i++) {
             Slot slot = screenHandler.slots.get(i);
-            
-            if (!slot.inventory.equals(playerInventory))
-                continue;
             
             ItemStack slotStack = slot.getStack();
             
