@@ -24,9 +24,9 @@ It is **required** on the server, but **optional** on the client, meaning only t
 
 ## Customization
 
-### 🖼️ **Slot Appearance**
+### 🖼️ **Bin Slot Texture**
 - The trash bin slot texture is automatically generated using built-in game textures and adapts to match your active resource pack's inventory GUI style
-- You can customize the appearance by using a resource pack that supports this mod (specifically one that has a texture for the custom [slot.png](https://github.com/5antos/bin-slot/blob/main/src/main/resources/assets/binslot/textures/gui/slot.png) file)
+- Alternatively, you can customize the slot texture by using a resource pack that supports this mod
 
 
 ---
