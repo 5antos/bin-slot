@@ -18,6 +18,7 @@ It is **required** on the server, but **optional** on the client, meaning only t
 - **Right Click**: Delete a single item from your cursor stack
 - **Shift + Hover**: Preview which items will be highlighted for deletion
 - **Shift + Hover + Click**: Delete items from your cursor stack and all matching items from your inventory
+- **Shift + Click with empty cursor stack**: Deletes every item from your **creative** inventory (`v1.1.0+`)
 
 ### 🌐 Translations
 - Built-in translations for all the languages in the game
