@@ -158,7 +158,7 @@ public class GenericContainerScreenMixin {
                 int clickableX = topLeftCornerX + Constants.CLICKABLE_OFFSET_X;
                 int clickableY = topLeftCornerY + Constants.CLICKABLE_OFFSET_Y;
 
-                boolean isHovering = ScreenUtil.isMouseOverArea(
+                boolean isHoveringOverBinSlot = ScreenUtil.isMouseOverArea(
                     mouseX, mouseY,
                     clickableX, clickableY,
                     Constants.CLICKABLE_WIDTH, Constants.CLICKABLE_HEIGHT
@@ -166,13 +166,14 @@ public class GenericContainerScreenMixin {
 
                 ScreenAccessor screenAccessor = (ScreenAccessor) accessor;
 
-                if (isHovering) {
+                if (isHoveringOverBinSlot) {
                     BinSlotHoverCallback.EVENT.invoker().onBinSlotHover(
                         screenAccessor.getTextRenderer(),
                         context,
                         topLeftCornerX, topLeftCornerY,
                         mouseX, mouseY,
                         Screen.hasShiftDown(),
+                        false,
                         callbackInfo
                     );
                 }

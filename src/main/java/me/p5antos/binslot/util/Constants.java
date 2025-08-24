@@ -19,7 +19,8 @@ public final class Constants {
 
 
         // Payloads
-        TRASH_ITEM_PAYLOAD_ID = BinSlotModInitializer.id("mouse_click")
+        MOUSE_CLICK_PAYLOAD_ID = BinSlotModInitializer.id("mouse_click"),
+        TRASH_ITEM_PAYLOAD_ID = BinSlotModInitializer.id("trash_item")
     ;
 
 
