@@ -8,6 +8,7 @@ It is **required** on the server, but **optional** on the client, meaning only t
 - Adds a dedicated trash bin slot to your inventory interface
 - Items placed in this slot are **permanently deleted**
 - Seamlessly integrates with **survival mode**, **creative mode**, and **all container interfaces**
+  - Since `v1.1.0`, the creative inventory built-in deletion slot mechanics now match the mod's Bin Slot functionalities
 
 ### 🎯 Slot Highlighting
 - **Shift + Hover**: When you hold Shift and hover over the bin slot while holding an item, the mod highlights all matching items (based on ID) in your inventory with a red overlay

@@ -7,8 +7,8 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 
-public record MouseClickC2SPayload(ItemStack itemStack, boolean isRightClick, boolean isShiftClick) implements CustomPayload {
-    public static final CustomPayload.Id<MouseClickC2SPayload> ID = new CustomPayload.Id<>(Constants.TRASH_ITEM_PAYLOAD_ID);
+public record MouseClickC2SPayload(ItemStack itemStack, boolean isRightClick, boolean isShiftClick, boolean isCreativeInventory) implements CustomPayload {
+    public static final CustomPayload.Id<MouseClickC2SPayload> ID = new CustomPayload.Id<>(Constants.MOUSE_CLICK_PAYLOAD_ID);
     public static final PacketCodec<RegistryByteBuf, MouseClickC2SPayload> CODEC = PacketCodec.tuple(
         ItemStack.OPTIONAL_PACKET_CODEC,
         MouseClickC2SPayload::itemStack,
@@ -16,6 +16,8 @@ public record MouseClickC2SPayload(ItemStack itemStack, boolean isRightClick, bo
         MouseClickC2SPayload::isRightClick,
         PacketCodecs.BOOLEAN,
         MouseClickC2SPayload::isShiftClick,
+        PacketCodecs.BOOLEAN,
+        MouseClickC2SPayload::isCreativeInventory,
         MouseClickC2SPayload::new
     );
 

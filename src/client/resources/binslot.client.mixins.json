@@ -3,8 +3,10 @@
   "package": "me.p5antos.binslot.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "CreativeInventoryScreenMixin",
     "GenericContainerScreenMixin",
     "HandledScreenMixin",
+    "accessor.CreativeInventoryScreenAccessor",
     "accessor.HandledScreenAccessor"
   ],
   "injectors": {

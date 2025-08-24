@@ -1,6 +1,7 @@
 package me.p5antos.binslot.network;
 
 import me.p5antos.binslot.network.payload.MouseClickC2SPayload;
+import me.p5antos.binslot.network.payload.TrashItemS2CPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.util.Identifier;
 public class NetworkManager {
     public static void init() {
         PayloadTypeRegistry.playC2S().register(MouseClickC2SPayload.ID, MouseClickC2SPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(TrashItemS2CPayload.ID, TrashItemS2CPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(MouseClickC2SPayload.ID, NetworkManager::handleMouseClick);
     }
@@ -27,26 +29,47 @@ public class NetworkManager {
 
         ScreenHandler screenHandler = player.currentScreenHandler;
 
-        if (!ItemStack.areEqual(cursorStack, screenHandler.getCursorStack()))
-            return;
-        else if (cursorStack.isEmpty())
+        boolean isCreativeInventory = payload.isCreativeInventory();
+
+        if (!ItemStack.areEqual(cursorStack, screenHandler.getCursorStack()) && !isCreativeInventory)
             return;
 
         boolean isRightClick = payload.isRightClick();
         boolean isShiftClick = payload.isShiftClick();
 
+        if (cursorStack.isEmpty() && isCreativeInventory && isShiftClick) {
+            clearInventory(player);
+            return;
+        }
+
+        ItemStack newCursorStack;
+
         if (isShiftClick) {
             deleteAllMatchingItems(player, cursorStack);
 
-            screenHandler.setCursorStack(ItemStack.EMPTY);
+            newCursorStack = ItemStack.EMPTY;
         } else if (isRightClick) {
             cursorStack.split(1);
 
-            screenHandler.setCursorStack(cursorStack);
+            newCursorStack = cursorStack;
         } else {
-            ItemStack newCursorStack = ItemStack.EMPTY;
-            
-            screenHandler.setCursorStack(newCursorStack);
+            newCursorStack = ItemStack.EMPTY;
+        }
+
+        screenHandler.setCursorStack(newCursorStack);
+
+        TrashItemS2CPayload newPayload = new TrashItemS2CPayload(newCursorStack);
+
+        ServerPlayNetworking.send(player, newPayload);
+    }
+
+    private static void clearInventory(ServerPlayerEntity player) {
+        ScreenHandler screenHandler = player.currentScreenHandler;
+
+        for (int i = 0; i < screenHandler.slots.size(); i++) {
+            Slot slot = screenHandler.slots.get(i);
+
+            slot.setStack(ItemStack.EMPTY);
         }
     }
 

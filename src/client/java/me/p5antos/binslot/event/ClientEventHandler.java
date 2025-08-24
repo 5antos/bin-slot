@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.screen.slot.Slot;
 import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
@@ -33,65 +32,69 @@ public class ClientEventHandler {
         BinSlotHoverCallback.EVENT.register(ClientEventHandler::onBinSlotHover);
     }
 
-    public static void onMouseClick(boolean isRightClick, double mouseX, double mouseY, ItemStack itemStack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (itemStack.isEmpty())
+    public static void onMouseClick(boolean isRightClick, double mouseX, double mouseY, ItemStack itemStack, boolean isCreativeInventory) {
+        if (!isCreativeInventory && itemStack.isEmpty())
             return;
 
-        boolean isHovering = ScreenUtil.isMouseOverArea(
+        boolean isHoveringOverBinSlot = ScreenUtil.isMouseOverArea(
             (int)mouseX, (int)mouseY,
             binSlot.x, binSlot.y,
             Constants.CLICKABLE_WIDTH, Constants.CLICKABLE_HEIGHT
         );
 
-        if (isHovering) {
+        if (isCreativeInventory || isHoveringOverBinSlot) {
             boolean isShiftClick = Screen.hasShiftDown();
-            MouseClickC2SPayload payload = new MouseClickC2SPayload(itemStack, isRightClick, isShiftClick);
+
+            MouseClickC2SPayload payload = new MouseClickC2SPayload(itemStack, isRightClick, isShiftClick, isCreativeInventory);
+
             ClientPlayNetworking.send(payload);
         }
     }
 
-    public static void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, CallbackInfo callbackInfo) {
-        SlotAccessor slotAccessor = (SlotAccessor) binSlot;
+    public static void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, boolean isCreativeInventory, CallbackInfo callbackInfo) {
+        if (!isCreativeInventory) {
+            SlotAccessor slotAccessor = (SlotAccessor) binSlot;
 
-        // Calculate the clickable area position (the actual slot area within the texture)
-        int clickableX = slotX + Constants.CLICKABLE_OFFSET_X;
-        int clickableY = slotY + Constants.CLICKABLE_OFFSET_Y;
-        
-        slotAccessor.setX(clickableX);
-        slotAccessor.setY(clickableY);
-        
-        int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
-        int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
+            // Calculate the clickable area position (the actual slot area within the texture)
+            int clickableX = slotX + Constants.CLICKABLE_OFFSET_X;
+            int clickableY = slotY + Constants.CLICKABLE_OFFSET_Y;
 
-        // Position the highlight sprites relative to the clickable area
-        context.drawGuiTexture(
-            RenderPipelines.GUI_TEXTURED,
-            Constants.BIN_SLOT_HIGHLIGHT_BACK_TEXTURE,
-            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
-            0, 0,
-            highlightX,
-            highlightY,
-            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
-        );
+            slotAccessor.setX(clickableX);
+            slotAccessor.setY(clickableY);
 
-        context.drawGuiTexture(
-            RenderPipelines.GUI_TEXTURED,
-            Constants.BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE,
-            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
-            0, 0,
-            highlightX,
-            highlightY,
-            Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
-        );
+            int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
+            int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
+
+            // Position the highlight sprites relative to the clickable area
+            context.drawGuiTexture(
+                RenderPipelines.GUI_TEXTURED,
+                Constants.BIN_SLOT_HIGHLIGHT_BACK_TEXTURE,
+                Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
+                0, 0,
+                highlightX,
+                highlightY,
+                Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
+            );
+
+            context.drawGuiTexture(
+                RenderPipelines.GUI_TEXTURED,
+                Constants.BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE,
+                Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
+                0, 0,
+                highlightX,
+                highlightY,
+                Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
+            );
+
+            List<Text> tooltip = new ArrayList<>();
+
+            tooltip.add(Text.translatable("inventory.binSlot"));
+
+            context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+        }
 
         if (isShiftDown)
             showRedOverlaysOnMatchingItems(context);
-
-        List<Text> tooltip = new ArrayList<>();
-
-        tooltip.add(Text.translatable("inventory.binSlot"));
-
-        context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
     }
 
     private static void showRedOverlaysOnMatchingItems(DrawContext context) {

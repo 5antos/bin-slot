@@ -62,7 +62,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
         }
     }
 
-    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseClicked", at = @At("HEAD"))
     private void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable)
     {
         boolean isRightClick = button == Constants.RIGHT_MOUSE_BUTTON;
@@ -75,7 +75,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
                 mouseX,
                 mouseY,
                 this.handler.getCursorStack(),
-                callbackInfoReturnable
+                false
             );
         }
     }
