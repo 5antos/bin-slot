@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public interface BinSlotHoverCallback {
     Event<BinSlotHoverCallback> EVENT = EventFactory.createArrayBacked(BinSlotHoverCallback.class,
-        (listeners) -> (textRenderer, context, slotX, slotY, mouseX, mouseY, isShiftDown, callbackInfo) -> {
+        (listeners) -> (textRenderer, context, slotX, slotY, mouseX, mouseY, isShiftDown, isCreativeInventory, callbackInfo) -> {
             for (BinSlotHoverCallback listener : listeners) {
-                listener.onBinSlotHover(textRenderer, context, slotX, slotY, mouseX, mouseY, isShiftDown, callbackInfo);
+                listener.onBinSlotHover(textRenderer, context, slotX, slotY, mouseX, mouseY, isShiftDown, isCreativeInventory, callbackInfo);
             }
         });
 
-    void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, CallbackInfo callbackInfo);
+    void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, boolean isCreativeInventory, CallbackInfo callbackInfo);
 }
