@@ -5,12 +5,13 @@ import me.p5antos.binslot.extension.HotBarSlot;
 import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
 import me.p5antos.binslot.util.ScreenUtil;
 import me.p5antos.binslot.util.Constants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,22 +22,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
-@Mixin(HandledScreen.class)
-public abstract class HandledScreenMixin<T extends ScreenHandler> {
-    @Final @Shadow protected T handler;
+@Mixin(AbstractContainerScreen.class)
+public abstract class HandledScreenMixin<T extends AbstractContainerMenu> {
+    @Final @Shadow protected T menu;
 
-    @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At("HEAD"), cancellable = true)
-    private void onOnMouseClick(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo callbackInfo) {
-        // Check if this is an action that might result in item dropping
-        if (slotId == -999 && actionType == SlotActionType.PICKUP) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            
-            // Use the same coordinate system as the rendering (scaled coordinates)
-            double mouseX = client.mouse.getX() * client.getWindow().getScaledWidth() / client.getWindow().getWidth();
-            double mouseY = client.mouse.getY() * client.getWindow().getScaledHeight() / client.getWindow().getHeight();
+    @Inject(method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ContainerInput;)V", at = @At("HEAD"), cancellable = true)
+    private void onOnMouseClick(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo callbackInfo) {
+        if (slotId == -999 && actionType == ContainerInput.PICKUP) {
+            Minecraft client = Minecraft.getInstance();
+
+            double mouseX = client.mouseHandler.xpos() * client.getWindow().getGuiScaledWidth() / client.getWindow().getScreenWidth();
+            double mouseY = client.mouseHandler.ypos() * client.getWindow().getGuiScaledHeight() / client.getWindow().getScreenHeight();
 
             HandledScreenAccessor<?> accessor = ((HandledScreenAccessor<?>)this);
-            
+
             Optional<Slot> hotBarSlot = accessor
                 .getHandler().slots
                 .stream()
@@ -63,18 +62,17 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
-    private void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable)
-    {
-        boolean isRightClick = button == Constants.RIGHT_MOUSE_BUTTON;
+    private void onMouseClick(MouseButtonEvent event, boolean b, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        boolean isRightClick = event.button() == Constants.RIGHT_MOUSE_BUTTON;
 
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
 
         if (player != null) {
             HandledScreenMouseClickCallback.EVENT.invoker().onMouseClick(
                 isRightClick,
-                mouseX,
-                mouseY,
-                this.handler.getCursorStack(),
+                event.x(),
+                event.y(),
+                this.menu.getCarried(),
                 false
             );
         }

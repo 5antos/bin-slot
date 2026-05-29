@@ -2,7 +2,7 @@ package me.p5antos.binslot.event.callback;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public interface HandledScreenMouseClickCallback {
     Event<HandledScreenMouseClickCallback> EVENT = EventFactory.createArrayBacked(HandledScreenMouseClickCallback.class,

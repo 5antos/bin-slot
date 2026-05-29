@@ -1,6 +1,6 @@
 package me.p5antos.binslot.mixin.client.accessor;
 
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -11,8 +11,7 @@ public interface SlotAccessor {
     @Mutable
     void setX(int x);
 
-    @Accessor()
+    @Accessor
     @Mutable
     void setY(int y);
 }
-

@@ -1,7 +1,7 @@
 package me.p5antos.binslot.util;
 
 import me.p5antos.binslot.BinSlotModInitializer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public final class Constants {
     // Identifiers
@@ -9,12 +9,12 @@ public final class Constants {
         // Textures
         BIN_SLOT_TEXTURE = BinSlotModInitializer.id("textures/gui/slot.png"),
 
-        CREATIVE_INVENTORY_TEXTURE = Identifier.ofVanilla("textures/gui/container/creative_inventory/tab_inventory.png"),
-        CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE = Identifier.ofVanilla("textures/gui/sprites/container/creative_inventory/tab_top_selected_1.png"),
-        SURVIVAL_INVENTORY_TEXTURE = Identifier.ofVanilla("textures/gui/container/inventory.png"),
+        CREATIVE_INVENTORY_TEXTURE = Identifier.withDefaultNamespace("textures/gui/container/creative_inventory/tab_inventory.png"),
+        CREATIVE_INVENTORY_TOP_SELECTED_TAB_TEXTURE = Identifier.withDefaultNamespace("textures/gui/sprites/container/creative_inventory/tab_top_selected_1.png"),
+        SURVIVAL_INVENTORY_TEXTURE = Identifier.withDefaultNamespace("textures/gui/container/inventory.png"),
 
-        BIN_SLOT_HIGHLIGHT_BACK_TEXTURE = Identifier.ofVanilla("container/slot_highlight_back"),
-        BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE = Identifier.ofVanilla("container/slot_highlight_front"),
+        BIN_SLOT_HIGHLIGHT_BACK_TEXTURE = Identifier.withDefaultNamespace("container/slot_highlight_back"),
+        BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE = Identifier.withDefaultNamespace("container/slot_highlight_front"),
 
 
 

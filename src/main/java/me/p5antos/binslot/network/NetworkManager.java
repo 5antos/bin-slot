@@ -4,34 +4,32 @@ import me.p5antos.binslot.network.payload.MouseClickC2SPayload;
 import me.p5antos.binslot.network.payload.TrashItemS2CPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class NetworkManager {
     public static void init() {
-        PayloadTypeRegistry.playC2S().register(MouseClickC2SPayload.ID, MouseClickC2SPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(TrashItemS2CPayload.ID, TrashItemS2CPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MouseClickC2SPayload.ID, MouseClickC2SPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(TrashItemS2CPayload.ID, TrashItemS2CPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(MouseClickC2SPayload.ID, NetworkManager::handleMouseClick);
     }
 
     private static void handleMouseClick(MouseClickC2SPayload payload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+        ServerPlayer player = context.player();
 
         if (player.isSpectator())
             return;
 
         ItemStack cursorStack = payload.itemStack().copy();
 
-        ScreenHandler screenHandler = player.currentScreenHandler;
+        AbstractContainerMenu menu = player.containerMenu;
 
         boolean isCreativeInventory = payload.isCreativeInventory();
 
-        if (!ItemStack.areEqual(cursorStack, screenHandler.getCursorStack()) && !isCreativeInventory)
+        if (!ItemStack.isSameItemSameComponents(cursorStack, menu.getCarried()) && !isCreativeInventory)
             return;
 
         boolean isRightClick = payload.isRightClick();
@@ -56,38 +54,36 @@ public class NetworkManager {
             newCursorStack = ItemStack.EMPTY;
         }
 
-        screenHandler.setCursorStack(newCursorStack);
+        menu.setCarried(newCursorStack);
 
         TrashItemS2CPayload newPayload = new TrashItemS2CPayload(newCursorStack);
 
         ServerPlayNetworking.send(player, newPayload);
     }
 
-    private static void clearInventory(ServerPlayerEntity player) {
-        ScreenHandler screenHandler = player.currentScreenHandler;
+    private static void clearInventory(ServerPlayer player) {
+        AbstractContainerMenu menu = player.containerMenu;
 
-        for (int i = 0; i < screenHandler.slots.size(); i++) {
-            Slot slot = screenHandler.slots.get(i);
+        for (int i = 0; i < menu.slots.size(); i++) {
+            Slot slot = menu.slots.get(i);
 
-            slot.setStack(ItemStack.EMPTY);
+            slot.set(ItemStack.EMPTY);
         }
     }
 
-    private static void deleteAllMatchingItems(ServerPlayerEntity player, ItemStack targetStack) {
+    private static void deleteAllMatchingItems(ServerPlayer player, ItemStack targetStack) {
         if (targetStack.isEmpty())
             return;
 
-        Identifier targetItemId = Registries.ITEM.getId(targetStack.getItem());
+        AbstractContainerMenu menu = player.containerMenu;
 
-        ScreenHandler screenHandler = player.currentScreenHandler;
+        for (int i = 0; i < menu.slots.size(); i++) {
+            Slot slot = menu.slots.get(i);
 
-        for (int i = 0; i < screenHandler.slots.size(); i++) {
-            Slot slot = screenHandler.slots.get(i);
+            ItemStack stack = slot.getItem();
 
-            ItemStack stack = slot.getStack();
-
-            if (!stack.isEmpty() && Registries.ITEM.getId(stack.getItem()).equals(targetItemId))
-                slot.setStack(ItemStack.EMPTY);
+            if (!stack.isEmpty() && stack.getItem() == targetStack.getItem())
+                slot.set(ItemStack.EMPTY);
         }
     }
 }

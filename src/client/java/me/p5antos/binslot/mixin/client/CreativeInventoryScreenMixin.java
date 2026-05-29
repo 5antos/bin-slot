@@ -7,31 +7,32 @@ import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
 import me.p5antos.binslot.mixin.client.accessor.ScreenAccessor;
 import me.p5antos.binslot.util.Constants;
 import me.p5antos.binslot.util.ScreenUtil;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
 import org.objectweb.asm.Opcodes;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(CreativeInventoryScreen.class)
+@Mixin(CreativeModeInventoryScreen.class)
 public class CreativeInventoryScreenMixin {
     @Inject(
-        method = "onMouseClick",
+        method = "slotClicked",
         at = @At(
             value = "FIELD",
-            target = "Lnet/minecraft/client/gui/screen/ingame/CreativeInventoryScreen;deleteItemSlot:Lnet/minecraft/screen/slot/Slot;",
+            target = "Lnet/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen;destroyItemSlot:Lnet/minecraft/world/inventory/Slot;",
             opcode = Opcodes.GETFIELD
         ),
         cancellable = true
     )
-    private void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo callbackInfo) {
+    private void onMouseClick(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo callbackInfo) {
         CreativeInventoryScreenAccessor screen = (CreativeInventoryScreenAccessor) this;
 
         if (slot != null && slot == screen.getDeleteItemSlot()) {
@@ -42,14 +43,14 @@ public class CreativeInventoryScreenMixin {
 
             HandledScreenAccessor<?> genericAccessor = (HandledScreenAccessor<?>) screen;
             {
-                ScreenHandler handler = genericAccessor.getHandler();
+                AbstractContainerMenu handler = genericAccessor.getHandler();
 
-                if (handler instanceof CreativeInventoryScreen.CreativeScreenHandler)
+                if (handler instanceof CreativeModeInventoryScreen.ItemPickerMenu)
                     HandledScreenMouseClickCallback.EVENT.invoker().onMouseClick(
                         isRightClick,
                         slot.x,
                         slot.y,
-                        handler.getCursorStack(),
+                        handler.getCarried(),
                         true
                     );
             }
@@ -57,11 +58,11 @@ public class CreativeInventoryScreenMixin {
     }
 
     @Inject(
-        method = "drawBackground",
+        method = "extractRenderState",
         at = @At("TAIL")
     )
-    private void onDrawBackground(DrawContext context, float deltaTicks, int mouseX, int mouseY, CallbackInfo callbackInfo) {
-        var screenHandler = ((HandledScreen<?>) (Object) this);
+    private void onDrawBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo callbackInfo) {
+        var screenHandler = ((AbstractContainerScreen<?>) (Object) this);
 
         if (screenHandler != null) {
             HandledScreenAccessor<?> accessor = ((HandledScreenAccessor<?>) screenHandler);
@@ -81,16 +82,21 @@ public class CreativeInventoryScreenMixin {
                     Constants.CLICKABLE_WIDTH, Constants.CLICKABLE_HEIGHT
                 );
 
-                if (isHoveringOverDeleteItemSlot)
+                if (isHoveringOverDeleteItemSlot) {
+                    long windowHandle = net.minecraft.client.Minecraft.getInstance().getWindow().handle();
+                    boolean isShiftDown = GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
+                        || GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
+
                     BinSlotHoverCallback.EVENT.invoker().onBinSlotHover(
                         screenAccessor.getTextRenderer(),
                         context,
                         deleteItemSlot.x, deleteItemSlot.y,
                         mouseX, mouseY,
-                        Screen.hasShiftDown(),
+                        isShiftDown,
                         true,
                         callbackInfo
                     );
+                }
             }
         }
     }

@@ -2,7 +2,7 @@ package me.p5antos.binslot;
 
 import me.p5antos.binslot.network.NetworkManager;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.loader.api.FabricLoader;
@@ -36,6 +36,6 @@ public class BinSlotModInitializer implements ModInitializer {
 	}
 
 	public static Identifier id(String path) {
-		return Identifier.of(MOD_ID, path);
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

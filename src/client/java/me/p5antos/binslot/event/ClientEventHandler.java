@@ -3,23 +3,23 @@ package me.p5antos.binslot.event;
 import me.p5antos.binslot.extension.BinSlot;
 import me.p5antos.binslot.event.callback.HandledScreenMouseClickCallback;
 import me.p5antos.binslot.event.callback.BinSlotHoverCallback;
+import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
 import me.p5antos.binslot.mixin.client.accessor.SlotAccessor;
 import me.p5antos.binslot.network.payload.MouseClickC2SPayload;
 import me.p5antos.binslot.util.ScreenUtil;
 import me.p5antos.binslot.util.Constants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.screen.slot.Slot;
-import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,9 @@ public class ClientEventHandler {
         );
 
         if (isCreativeInventory || isHoveringOverBinSlot) {
-            boolean isShiftClick = Screen.hasShiftDown();
+            long windowHandle = Minecraft.getInstance().getWindow().handle();
+            boolean isShiftClick = GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
+                || GLFW.glfwGetKey(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
 
             MouseClickC2SPayload payload = new MouseClickC2SPayload(itemStack, isRightClick, isShiftClick, isCreativeInventory);
 
@@ -51,11 +53,10 @@ public class ClientEventHandler {
         }
     }
 
-    public static void onBinSlotHover(TextRenderer textRenderer, DrawContext context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, boolean isCreativeInventory, CallbackInfo callbackInfo) {
+    public static void onBinSlotHover(Font font, GuiGraphicsExtractor context, int slotX, int slotY, int mouseX, int mouseY, boolean isShiftDown, boolean isCreativeInventory, CallbackInfo callbackInfo) {
         if (!isCreativeInventory) {
             SlotAccessor slotAccessor = (SlotAccessor) binSlot;
 
-            // Calculate the clickable area position (the actual slot area within the texture)
             int clickableX = slotX + Constants.CLICKABLE_OFFSET_X;
             int clickableY = slotY + Constants.CLICKABLE_OFFSET_Y;
 
@@ -65,8 +66,7 @@ public class ClientEventHandler {
             int highlightX = clickableX - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
             int highlightY = clickableY - Constants.SLOT_HIGHLIGHT_TEXTURE_OFFSET;
 
-            // Position the highlight sprites relative to the clickable area
-            context.drawGuiTexture(
+            context.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 Constants.BIN_SLOT_HIGHLIGHT_BACK_TEXTURE,
                 Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
@@ -76,7 +76,7 @@ public class ClientEventHandler {
                 Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
             );
 
-            context.drawGuiTexture(
+            context.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 Constants.BIN_SLOT_HIGHLIGHT_FRONT_TEXTURE,
                 Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT,
@@ -86,49 +86,48 @@ public class ClientEventHandler {
                 Constants.SLOT_HIGHLIGHT_TEXTURE_WIDTH, Constants.SLOT_HIGHLIGHT_TEXTURE_HEIGHT
             );
 
-            List<Text> tooltip = new ArrayList<>();
+            List<Component> tooltip = new ArrayList<>();
 
-            tooltip.add(Text.translatable("inventory.binSlot"));
+            tooltip.add(Component.translatable("inventory.binSlot"));
 
-            context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+            context.setComponentTooltipForNextFrame(font, tooltip, mouseX, mouseY);
         }
 
         if (isShiftDown)
             showRedOverlaysOnMatchingItems(context);
     }
 
-    private static void showRedOverlaysOnMatchingItems(DrawContext context) {
-        MinecraftClient client = MinecraftClient.getInstance();
+    private static void showRedOverlaysOnMatchingItems(GuiGraphicsExtractor context) {
+        Minecraft client = Minecraft.getInstance();
 
-        if (client.player == null || client.currentScreen == null)
+        if (client.player == null || client.screen == null)
             return;
 
-        ScreenHandler screenHandler = client.player.currentScreenHandler;
+        AbstractContainerMenu menu = client.player.containerMenu;
 
-        ItemStack cursorStack = screenHandler.getCursorStack();
+        ItemStack cursorStack = menu.getCarried();
 
         if (cursorStack.isEmpty())
             return;
-        
-        if (!(client.currentScreen instanceof HandledScreen<?> handledScreen))
+
+        if (!(client.screen instanceof AbstractContainerScreen<?> handledScreen))
             return;
 
         HandledScreenAccessor<?> accessor = (HandledScreenAccessor<?>) handledScreen;
-        
         int containerX = accessor.getX();
         int containerY = accessor.getY();
 
-        for (int i = 0; i < screenHandler.slots.size(); i++) {
-            Slot slot = screenHandler.slots.get(i);
-            
-            ItemStack slotStack = slot.getStack();
-            
-            if (!slotStack.isEmpty() && ItemStack.areItemsEqual(slotStack, cursorStack)) {
+        for (int i = 0; i < menu.slots.size(); i++) {
+            Slot slot = menu.slots.get(i);
+
+            ItemStack slotStack = slot.getItem();
+
+            if (!slotStack.isEmpty() && ItemStack.isSameItem(slotStack, cursorStack)) {
                 int slotXPos = containerX + slot.x;
                 int slotYPos = containerY + slot.y;
-                
+
                 context.fill(
-                    slotXPos, slotYPos, 
+                    slotXPos, slotYPos,
                     slotXPos + Constants.VANILLA_SLOT_WIDTH - 2*Constants.SLOT_ICON_TEXTURE_OUTLINE_WIDTH,
                     slotYPos + Constants.VANILLA_SLOT_HEIGHT - 2*Constants.SLOT_ICON_TEXTURE_OUTLINE_WIDTH,
                     (Constants.MATCHING_SLOTS_OVERLAY_OPACITY << 24) | Constants.MATCHING_SLOTS_OVERLAY_COLOR
@@ -137,4 +136,3 @@ public class ClientEventHandler {
         }
     }
 }
-
