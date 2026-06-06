@@ -23,4 +23,4 @@ replay_*.log
 *.jfr
 
 # Aseprite
-.aseprite
+*.aseprite
