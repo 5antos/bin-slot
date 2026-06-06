@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "me.p5antos.binslot.mixin",
+  "package": "net.pemiridosa.binslot.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "ScreenHandlerMixin"
