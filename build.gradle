@@ -68,6 +68,9 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}
+
+	exclude "**/*.aseprite"
+	exclude "**/*_scaled.png"
 }
 
 // configure the maven publication
