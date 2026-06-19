@@ -100,7 +100,7 @@ public class ClientEventHandler {
     private static void showRedOverlaysOnMatchingItems(GuiGraphicsExtractor context) {
         Minecraft client = Minecraft.getInstance();
 
-        if (client.player == null || client.screen == null)
+        if (client.player == null || client.gui.screen() == null)
             return;
 
         AbstractContainerMenu menu = client.player.containerMenu;
@@ -110,7 +110,7 @@ public class ClientEventHandler {
         if (cursorStack.isEmpty())
             return;
 
-        if (!(client.screen instanceof AbstractContainerScreen<?> handledScreen))
+        if (!(client.gui.screen() instanceof AbstractContainerScreen<?> handledScreen))
             return;
 
         HandledScreenAccessor<?> accessor = (HandledScreenAccessor<?>) handledScreen;
