@@ -70,6 +70,8 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}
+
+	exclude "**/*.aseprite"
 }
 
 // configure the maven publication
