@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "me.p5antos.binslot.mixin.client",
+  "package": "net.pemiridosa.binslot.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "CreativeInventoryScreenMixin",

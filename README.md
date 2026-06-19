@@ -34,4 +34,4 @@ It is **required** on the server, but **optional** on the client, meaning only t
 ---
 
 
-_**Note**: This mod is designed to work seamlessly with vanilla Minecraft and most other mods. If you encounter any compatibility issues, please report them on the [GitHub Issues page](https://github.com/5antos/bin-slot/issues)._
+_**Note**: This mod is designed to work seamlessly with vanilla Minecraft and most other mods. If you encounter any compatibility issues, please report them on the [GitHub Issues page](https://github.com/Pemiridosa/bin-slot/issues)._
