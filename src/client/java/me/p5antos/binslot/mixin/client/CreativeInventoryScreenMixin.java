@@ -7,8 +7,8 @@ import me.p5antos.binslot.mixin.client.accessor.HandledScreenAccessor;
 import me.p5antos.binslot.mixin.client.accessor.ScreenAccessor;
 import me.p5antos.binslot.util.Constants;
 import me.p5antos.binslot.util.ScreenUtil;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
@@ -87,7 +87,7 @@ public class CreativeInventoryScreenMixin {
                         context,
                         deleteItemSlot.x, deleteItemSlot.y,
                         mouseX, mouseY,
-                        Screen.hasShiftDown(),
+                        MinecraftClient.getInstance().isShiftPressed(),
                         true,
                         callbackInfo
                     );

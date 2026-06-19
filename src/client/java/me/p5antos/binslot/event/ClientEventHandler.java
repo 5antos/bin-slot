@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -43,7 +42,7 @@ public class ClientEventHandler {
         );
 
         if (isCreativeInventory || isHoveringOverBinSlot) {
-            boolean isShiftClick = Screen.hasShiftDown();
+            boolean isShiftClick = MinecraftClient.getInstance().isShiftPressed();
 
             MouseClickC2SPayload payload = new MouseClickC2SPayload(itemStack, isRightClick, isShiftClick, isCreativeInventory);
 

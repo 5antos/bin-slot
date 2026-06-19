@@ -10,7 +10,6 @@ import me.p5antos.binslot.util.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -172,7 +171,7 @@ public class GenericContainerScreenMixin {
                         context,
                         topLeftCornerX, topLeftCornerY,
                         mouseX, mouseY,
-                        Screen.hasShiftDown(),
+                        MinecraftClient.getInstance().isShiftPressed(),
                         false,
                         callbackInfo
                     );
