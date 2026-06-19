@@ -12,7 +12,7 @@
 		"sources": "https://github.com/5antos/bin-slot"
 	},
 	"license": "MIT",
-	"icon": "assets/binslot/icon.png",
+	"icon": "assets/bin-slot/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
