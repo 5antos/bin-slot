@@ -27,7 +27,7 @@ import net.minecraft.client.gui.screen.ingame.CartographyTableScreen;
 import net.minecraft.client.gui.screen.ingame.ForgingScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.client.gui.screen.ingame.BrewingStandScreen;
-import net.minecraft.client.gui.screen.ingame.HorseScreen;
+import net.minecraft.client.gui.screen.ingame.MountScreen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
@@ -54,7 +54,7 @@ import java.util.Optional;
     ForgingScreen.class,
     LoomScreen.class,
     BrewingStandScreen.class,
-    HorseScreen.class,
+    MountScreen.class,
     MerchantScreen.class
 })
 public class GenericContainerScreenMixin {

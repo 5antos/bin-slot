@@ -6,6 +6,7 @@ import net.pemiridosa.binslot.mixin.client.accessor.HandledScreenAccessor;
 import net.pemiridosa.binslot.util.ScreenUtil;
 import net.pemiridosa.binslot.util.Constants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.screen.ScreenHandler;
@@ -63,17 +64,17 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
-    private void onMouseClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable)
+    private void onMouseClick(Click click, boolean doubleClick, CallbackInfoReturnable<Boolean> callbackInfoReturnable)
     {
-        boolean isRightClick = button == Constants.RIGHT_MOUSE_BUTTON;
+        boolean isRightClick = click.button() == Constants.RIGHT_MOUSE_BUTTON;
 
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
         if (player != null) {
             HandledScreenMouseClickCallback.EVENT.invoker().onMouseClick(
                 isRightClick,
-                mouseX,
-                mouseY,
+                click.x(),
+                click.y(),
                 this.handler.getCursorStack(),
                 false
             );
